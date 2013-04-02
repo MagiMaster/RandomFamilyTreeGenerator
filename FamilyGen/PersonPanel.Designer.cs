@@ -34,7 +34,7 @@
             this.nameLabel.TabIndex = 0;
             this.nameLabel.Text = "Name";
             this.nameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.nameLabel.Click += new System.EventHandler(this.PersonPanel_Click);
+            this.nameLabel.Click += new System.EventHandler(this.nameLabel_Click);
             this.nameLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseDown);
             this.nameLabel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseMove);
             this.nameLabel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseUp);

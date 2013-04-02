@@ -99,19 +99,19 @@ namespace FamilyGen {
             prevPos = pos;
         }
 
-        private Point dragOffset;
+        private Point dragOrigin;
         private PersonPanel dragPanel;
 
         public void StartMovePerson(PersonPanel pp, int ox, int oy) {
-            dragOffset = new Point(ox, oy); //(pp.Location.X - ox, pp.Location.Y - oy);
+            dragOrigin = new Point(ox, oy); //(pp.Location.X - ox, pp.Location.Y - oy);
             dragPanel = pp;
         }
 
         public void MovePerson(int mx, int my) {
             if (dragPanel == null)
                 return;
-            Debug.Write(mx.ToString() + " " + my.ToString() + "\n");
-            dragPanel.Location = new Point(dragPanel.Location.X + mx - dragOffset.X, dragPanel.Location.Y + my - dragOffset.Y);
+
+            dragPanel.Location = new Point(dragPanel.Location.X + mx - dragOrigin.X, dragPanel.Location.Y + my - dragOrigin.Y);
         }
 
         public void FinishMovePerson() {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace FamilyGen {
-    class RandomList {
+    class WeightedList {
         private static Random rnd = new Random();
         private List<string> data = new List<string>();
         private List<double> weight = new List<double>();

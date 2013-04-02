@@ -30,33 +30,47 @@ namespace FamilyGen {
             nameLabel.Text = person.fullName;
         }
 
-        private void PersonPanel_Click(object sender, EventArgs e) {
-            // Generate missing data
-            person.FillData(this);
-            
-            // Open full data panel
-
-            // Center on clicked panel
-            MainForm.mainForm.CenterOn(this);
-        }
+        private bool noClick = false;
 
         private void PersonPanel_MouseDown(object sender, MouseEventArgs e) {
-            this.Capture = true;
-
             while (!(sender is PersonPanel))
                 sender = (sender as Control).Parent;
 
             MainForm.mainForm.StartMovePerson(sender as PersonPanel, e.X, e.Y);
+
+            noClick = false;
         }
 
         private void PersonPanel_MouseUp(object sender, MouseEventArgs e) {
             MainForm.mainForm.FinishMovePerson();
-
-            this.Capture = false;
         }
 
         private void PersonPanel_MouseMove(object sender, MouseEventArgs e) {
             MainForm.mainForm.MovePerson(e.X, e.Y);
+
+            noClick = true;
+        }
+
+        private void nameLabel_Click(object sender, EventArgs e) {
+            PersonPanel_Click(sender, e);
+        }
+
+        private void PersonPanel_Click(object sender, EventArgs e) {
+            if (noClick)
+                return;
+
+            while (!(sender is PersonPanel))
+                sender = (sender as Control).Parent;
+
+            // Generate missing data
+            person.FillData(sender as PersonPanel);
+
+            // Open full data panel
+            FullInfoForm f = new FullInfoForm(person);
+            f.Show();
+
+            // Center on clicked panel
+            MainForm.mainForm.CenterOn(sender as PersonPanel);
         }
     }
 }

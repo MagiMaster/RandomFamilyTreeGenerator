@@ -19,11 +19,11 @@ namespace FamilyGen {
 
         #region Helper Functions
 
-        private static RandomList maleNames, femaleNames, lastNames;
+        private static WeightedList maleNames, femaleNames, lastNames;
 
         public static string RandomMaleName() {
             if (maleNames == null) {
-                maleNames = new RandomList();
+                maleNames = new WeightedList();
                 StreamReader sr = new StreamReader("..\\..\\Tables\\MaleNames.csv");
                 while(!sr.EndOfStream) {
                     string line = sr.ReadLine();
@@ -37,7 +37,7 @@ namespace FamilyGen {
 
         public static string RandomFemaleName() { 
             if (femaleNames == null) {
-                femaleNames = new RandomList();
+                femaleNames = new WeightedList();
                 StreamReader sr = new StreamReader("..\\..\\Tables\\FemaleNames.csv");
                 while(!sr.EndOfStream) {
                     string line = sr.ReadLine();
@@ -51,7 +51,7 @@ namespace FamilyGen {
 
         public static string RandomLastName() { 
             if (lastNames == null) {
-                lastNames = new RandomList();
+                lastNames = new WeightedList();
                 StreamReader sr = new StreamReader("..\\..\\Tables\\LastNames.csv");
                 while(!sr.EndOfStream) {
                     string line = sr.ReadLine();
@@ -272,10 +272,14 @@ namespace FamilyGen {
         public static Person GenerateSpouse(Person p) {
             Person s = new Person();
             s.isMale = !p.isMale;
+            s.isMarried = true;
+            s.spouse = p;
 
-
-            //...
-
+            s.lastName = p.lastName;
+            if (s.isMale)
+                s.maidenName = s.lastName;
+            else
+                s.maidenName = RandomLastName();
 
             s.children = p.children;
             foreach (Person c in s.children)
@@ -285,6 +289,24 @@ namespace FamilyGen {
                     else
                         c.mother = s;
                 }
+
+            int minAge = p.age / 2 + 7;
+            foreach (Person c in s.children)
+                if (c != null && c.age + 14 > minAge)
+                    minAge = c.age + 14;
+
+            do {
+                s.birth = p.birth + rnd.Next(0, 10) - rnd.Next(0, 10);
+                s.age = MainForm.mainForm.year - s.birth;
+            } while (s.age < minAge);
+
+            int ageRange = (int)(50.0 * Math.Exp(0.00035 * s.birth));
+            s.death = s.birth + ageRange + rnd.Next(1, ageRange / 10);
+
+            // This can break the pattern of inheritance if the spouse is generated after any children
+            s.hair = RandomHair();
+            s.eyes = RandomEyes();
+            s.hobby = RandomHobby(s.birth);
 
             return s;
         }

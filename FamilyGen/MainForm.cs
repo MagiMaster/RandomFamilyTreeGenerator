@@ -97,5 +97,14 @@ namespace FamilyGen {
 
             prevPos = pos;
         }
+
+        public void MovePerson(PersonPanel pp, int dx, int dy) {
+            pp.Location = new Point(pp.Location.X + dx, pp.Location.Y + dy);
+        }
+
+        public void FinishMovePerson(PersonPanel pp) {
+            ExpandScrollbars(pp.Location.X, pp.Location.Y, pp.Location.X + pp.Width, pp.Location.Y + pp.Height);
+            CenterOn(pp);
+        }
     }
 }

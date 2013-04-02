@@ -34,7 +34,10 @@
             this.nameLabel.TabIndex = 0;
             this.nameLabel.Text = "Name";
             this.nameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.nameLabel.Click += new System.EventHandler(this.personPanel_Click);
+            this.nameLabel.Click += new System.EventHandler(this.PersonPanel_Click);
+            this.nameLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseDown);
+            this.nameLabel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseMove);
+            this.nameLabel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseUp);
             // 
             // PersonPanel
             // 
@@ -45,7 +48,10 @@
             this.Controls.Add(this.nameLabel);
             this.Name = "PersonPanel";
             this.Size = new System.Drawing.Size(128, 40);
-            this.Click += new System.EventHandler(this.personPanel_Click);
+            this.Click += new System.EventHandler(this.PersonPanel_Click);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PersonPanel_MouseUp);
             this.ResumeLayout(false);
 
         }

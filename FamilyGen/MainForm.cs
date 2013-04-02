@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace FamilyGen {
     public partial class MainForm : Form {
@@ -72,7 +73,7 @@ namespace FamilyGen {
             ExpandScrollbars(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Right, ClientRectangle.Bottom);
 
             //TODO Don't hardcode PersonPanel sizes.
-            AddPerson(Person.GeneratePerson(), (ClientRectangle.Right - 128) / 2, (ClientRectangle.Bottom - 48) / 2);
+            AddPerson(Person.GeneratePerson(), (ClientRectangle.Right - 128) / 2, (ClientRectangle.Bottom - 40) / 2);
         }
 
         private Nullable<Point> prevPos = null;
@@ -98,13 +99,26 @@ namespace FamilyGen {
             prevPos = pos;
         }
 
-        public void MovePerson(PersonPanel pp, int dx, int dy) {
-            pp.Location = new Point(pp.Location.X + dx, pp.Location.Y + dy);
+        private Point dragOffset;
+        private PersonPanel dragPanel;
+
+        public void StartMovePerson(PersonPanel pp, int ox, int oy) {
+            dragOffset = new Point(ox, oy); //(pp.Location.X - ox, pp.Location.Y - oy);
+            dragPanel = pp;
         }
 
-        public void FinishMovePerson(PersonPanel pp) {
-            ExpandScrollbars(pp.Location.X, pp.Location.Y, pp.Location.X + pp.Width, pp.Location.Y + pp.Height);
-            CenterOn(pp);
+        public void MovePerson(int mx, int my) {
+            if (dragPanel == null)
+                return;
+            Debug.Write(mx.ToString() + " " + my.ToString() + "\n");
+            dragPanel.Location = new Point(dragPanel.Location.X + mx - dragOffset.X, dragPanel.Location.Y + my - dragOffset.Y);
+        }
+
+        public void FinishMovePerson() {
+            ExpandScrollbars(dragPanel.Location.X, dragPanel.Location.Y, dragPanel.Location.X + dragPanel.Width, dragPanel.Location.Y + dragPanel.Height);
+            CenterOn(dragPanel);
+
+            dragPanel = null;
         }
     }
 }

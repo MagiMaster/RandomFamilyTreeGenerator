@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace FamilyGen {
     public partial class PersonPanel : UserControl {
@@ -39,36 +40,23 @@ namespace FamilyGen {
             MainForm.mainForm.CenterOn(this);
         }
 
-        private Nullable<Point> prevPos = null;
-
         private void PersonPanel_MouseDown(object sender, MouseEventArgs e) {
-            prevPos = new Point(e.X, e.Y);
+            this.Capture = true;
+
+            while (!(sender is PersonPanel))
+                sender = (sender as Control).Parent;
+
+            MainForm.mainForm.StartMovePerson(sender as PersonPanel, e.X, e.Y);
         }
 
         private void PersonPanel_MouseUp(object sender, MouseEventArgs e) {
-            if (prevPos == null)
-                return;
+            MainForm.mainForm.FinishMovePerson();
 
-            while (!(sender is PersonPanel))
-                sender = (sender as Control).Parent;
-
-            MainForm.mainForm.FinishMovePerson(this);
-
-            prevPos = null;
+            this.Capture = false;
         }
 
         private void PersonPanel_MouseMove(object sender, MouseEventArgs e) {
-            if (prevPos == null)
-                return;
-
-            while (!(sender is PersonPanel))
-                sender = (sender as Control).Parent;
-
-            Point pos = new Point(e.X, e.Y);
-
-            MainForm.mainForm.MovePerson(sender as PersonPanel, e.X - prevPos.Value.X, e.Y - prevPos.Value.Y);
-
-            prevPos = pos;
+            MainForm.mainForm.MovePerson(e.X, e.Y);
         }
     }
 }

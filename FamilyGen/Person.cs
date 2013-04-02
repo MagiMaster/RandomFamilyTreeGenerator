@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace FamilyGen {
     public class Person {
@@ -18,9 +19,50 @@ namespace FamilyGen {
 
         #region Helper Functions
 
-        public static string RandomMaleName() { return "MALE"; }
-        public static string RandomFemaleName() { return "FEMALE"; }
-        public static string RandomLastName() { return "LAST"; }
+        private static RandomList maleNames, femaleNames, lastNames;
+
+        public static string RandomMaleName() {
+            if (maleNames == null) {
+                maleNames = new RandomList();
+                StreamReader sr = new StreamReader("..\\..\\Tables\\MaleNames.csv");
+                while(!sr.EndOfStream) {
+                    string line = sr.ReadLine();
+                    string[] parts = line.Split(',');
+                    maleNames.Add(parts[0], double.Parse(parts[1]));
+                }
+            }
+
+            return maleNames.Get();
+        }
+
+        public static string RandomFemaleName() { 
+            if (femaleNames == null) {
+                femaleNames = new RandomList();
+                StreamReader sr = new StreamReader("..\\..\\Tables\\FemaleNames.csv");
+                while(!sr.EndOfStream) {
+                    string line = sr.ReadLine();
+                    string[] parts = line.Split(',');
+                    femaleNames.Add(parts[0], double.Parse(parts[1]));
+                }
+            }
+
+            return femaleNames.Get();
+        }
+
+        public static string RandomLastName() { 
+            if (lastNames == null) {
+                lastNames = new RandomList();
+                StreamReader sr = new StreamReader("..\\..\\Tables\\LastNames.csv");
+                while(!sr.EndOfStream) {
+                    string line = sr.ReadLine();
+                    string[] parts = line.Split(',');
+                    lastNames.Add(parts[0], double.Parse(parts[1]));
+                }
+            }
+
+            return lastNames.Get();
+        }
+
         public static string RandomHobby(int year) { return "HOBBY"; }
 
         public static string RandomHair() {
@@ -186,6 +228,7 @@ namespace FamilyGen {
             c.death = c.birth + ageRange + rnd.Next(1, ageRange / 10);
 
             c.maidenName = p.lastName;
+            c.lastName = p.lastName;
 
             c.hobby = RandomHobby(c.birth);
 
@@ -209,7 +252,7 @@ namespace FamilyGen {
                 c.isMarried = rnd.NextDouble() < k;
 
                 if (c.isMarried) {
-                    if(!c.isMale)
+                    if (!c.isMale)
                         c.lastName = RandomLastName();
 
                     int n = 0;

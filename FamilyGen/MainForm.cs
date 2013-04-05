@@ -28,7 +28,7 @@ namespace FamilyGen {
             pp.Location = new Point(x, y);
             Controls.Add(pp);
 
-            ExpandScrollbars(x, y, x + pp.Width, y + pp.Height);
+            ExpandScrollbars(x - 32, y - 32, x + pp.Width + 32, y + pp.Height + 32);
             Invalidate();
 
             return n;
@@ -183,8 +183,8 @@ namespace FamilyGen {
                 Point pb = ppl[i].Location;
 
                 int dx = pa.X - pb.X;
-                int dy = pa.Y - pb.Y;
-                double dd = 90.0 / (9 * dx * dx + dy * dy + 0.01);
+                int dy = 4 * (pa.Y - pb.Y);
+                double dd = 300.0 / (dx * dx + dy * dy + 0.01);
 
                 Debug.Write(dx.ToString() + " " + dy.ToString() + "   " + dd.ToString() + "\n");
 

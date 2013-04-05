@@ -17,6 +17,8 @@ namespace FamilyGen {
         public Person mother, father, spouse;
         public List<Person> children;
 
+        public PersonPanel panel;
+
         #region Helper Functions
 
         private static WeightedList maleNames, femaleNames, lastNames;
@@ -270,8 +272,7 @@ namespace FamilyGen {
         }
 
         public static Person GenerateSpouse(Person p) {
-            Person s = new Person();
-            s.isMale = !p.isMale;
+            Person s = new Person(p.isMale ? "F" : "M");
             s.isMarried = true;
             s.spouse = p;
 

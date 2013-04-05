@@ -18,6 +18,7 @@ namespace FamilyGen {
             Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             person = p;
+            person.panel = this;
 
             UpdateData();
         }

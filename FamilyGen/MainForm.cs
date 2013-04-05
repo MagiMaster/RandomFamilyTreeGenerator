@@ -29,6 +29,7 @@ namespace FamilyGen {
             Controls.Add(pp);
 
             ExpandScrollbars(x, y, x + pp.Width, y + pp.Height);
+            Invalidate();
 
             return n;
         }
@@ -74,6 +75,11 @@ namespace FamilyGen {
 
             //TODO Don't hardcode PersonPanel sizes.
             AddPerson(Person.GeneratePerson(), (ClientRectangle.Right - 128) / 2, (ClientRectangle.Bottom - 40) / 2);
+
+            Timer t = new Timer();
+            t.Interval = 50;
+            t.Tick += new EventHandler(timerTick);
+            t.Start();
         }
 
         private Nullable<Point> prevPos = null;
@@ -112,13 +118,88 @@ namespace FamilyGen {
                 return;
 
             dragPanel.Location = new Point(dragPanel.Location.X + mx - dragOrigin.X, dragPanel.Location.Y + my - dragOrigin.Y);
+            Invalidate();
         }
 
         public void FinishMovePerson() {
+            if (dragPanel == null)
+                return;
+
             ExpandScrollbars(dragPanel.Location.X, dragPanel.Location.Y, dragPanel.Location.X + dragPanel.Width, dragPanel.Location.Y + dragPanel.Height);
             CenterOn(dragPanel);
 
             dragPanel = null;
+        }
+
+        protected override void OnPaint(PaintEventArgs e) {
+
+            Graphics g = e.Graphics;
+            g.Clear(MainForm.DefaultBackColor);
+
+            Pen dash = new Pen(Color.Black);
+            dash.DashPattern = new float[]{10, 10};
+
+            //TODO Don't hardcode PersonPanel sizes.
+            int ox = 128 / 2;
+            int oy = 40 / 2;
+
+            foreach (PersonPanel pp in ppl) {
+                if (pp.person.isMale && pp.person.spouse != null) {
+                    Point pa = pp.Location;
+                    Point pb = pp.person.spouse.panel.Location;
+                    Point p1 = new Point(pa.X + ox, pa.Y + oy);
+                    Point p2 = new Point(pb.X + ox, pb.Y + oy);
+                    Point p3 = new Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
+
+                    g.DrawLine(dash, p1, p2);
+
+                    foreach (Person c in pp.person.children) {
+                        if (c == null)
+                            continue;
+
+                        Point pc = c.panel.Location;
+                        Point p4 = new Point(pc.X + ox, pc.Y + oy);
+
+                        g.DrawLine(Pens.Black, p3, p4);
+                    }
+                }
+            }
+
+            base.OnPaint(e);
+        }
+
+        private int slice = 0;
+        public void timerTick(object sender, EventArgs e) {
+            if(ppl.Count == 0 || dragPanel != null)
+                return;
+
+            Point pa = ppl[slice].Location;
+
+            bool moved = false;
+            for (int i = 0; i < ppl.Count; ++i) {
+                if (i == slice)
+                    continue;
+
+                Point pb = ppl[i].Location;
+
+                int dx = pa.X - pb.X;
+                int dy = pa.Y - pb.Y;
+                double dd = 90.0 / (9 * dx * dx + dy * dy + 0.01);
+
+                Debug.Write(dx.ToString() + " " + dy.ToString() + "   " + dd.ToString() + "\n");
+
+                dx = (int)(dx * dd);
+                dy = (int)(dy * dd);
+
+                if (dx != 0 || dy != 0) {
+                    moved = true;
+                    ppl[i].Location = new Point(pb.X - dx, pb.Y - dy);
+                }
+            }
+
+            slice = (slice + 1) % ppl.Count;
+            if(moved)
+                Invalidate();
         }
     }
 }
